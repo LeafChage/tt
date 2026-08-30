@@ -1,11 +1,41 @@
-local tt            = require('tt')
-local actions       = require("telescope.actions")
-local finders       = require("telescope.finders")
-local pickers       = require("telescope.pickers")
-local conf          = require("telescope.config").values
-local entry_display = require("telescope.pickers.entry_display")
-local action_state  = require("telescope.actions.state")
-local previewers    = require("telescope.previewers")
+local tt             = require('tt')
+local actions        = require("telescope.actions")
+local finders        = require("telescope.finders")
+local pickers        = require("telescope.pickers")
+local conf           = require("telescope.config").values
+local entry_display  = require("telescope.pickers.entry_display")
+local action_state   = require("telescope.actions.state")
+local previewers     = require("telescope.previewers")
+
+---@param prompt_bufnr integer
+local create_handler = function(prompt_bufnr)
+    local lines = vim.api.nvim_buf_get_lines(prompt_bufnr, 0, -1, false)
+    local name = table.concat(lines, ""):gsub("> ", "")
+    actions.close(prompt_bufnr)
+    if #name > 0 then
+        tt.create(name)
+    end
+end
+
+---@param prompt_bufnr integer
+local open_handler   = function(prompt_bufnr)
+    local session = action_state.get_selected_entry()
+    if session then
+        actions.close(prompt_bufnr)
+        tt.open(session.id)
+    else
+        create_handler(prompt_bufnr)
+    end
+end
+
+---@param prompt_bufnr integer
+local close_handler  = function(prompt_bufnr)
+    local session = action_state.get_selected_entry()
+    if session then
+        actions.close(prompt_bufnr)
+        tt.kill(session.id)
+    end
+end
 
 return require("telescope").register_extension({
     exports = {
@@ -41,30 +71,10 @@ return require("telescope").register_extension({
                     end,
                 }),
                 attach_mappings = function(_, map)
-                    map("i", "<Enter>", function(prompt_bufnr)
-                        local session = action_state.get_selected_entry()
-                        if session then
-                            actions.close(prompt_bufnr)
-                            tt.open(session.id)
-                            return
-                        end
-
-                        local lines = vim.api.nvim_buf_get_lines(prompt_bufnr, 0, -1, false)
-                        local name = table.concat(lines, ""):gsub("> ", "")
-                        actions.close(prompt_bufnr)
-                        if #name > 0 then
-                            tt.create(name)
-                        end
-                    end, { desc = "open terminal" })
-
-                    map("i", "<C-d>", function(prompt_bufnr)
-                        local session = action_state.get_selected_entry()
-                        if session then
-                            actions.close(prompt_bufnr)
-                            tt.kill(session.id)
-                            return
-                        end
-                    end, { desc = "remove terminal" })
+                    map("i", tt.config.keys.i.open, open_handler, { desc = "open terminal" })
+                    map("n", tt.config.keys.n.open, open_handler, { desc = "open terminal" })
+                    map("i", tt.config.keys.i.close, close_handler, { desc = "open terminal" })
+                    map("n", tt.config.keys.n.close, close_handler, { desc = "open terminal" })
                     return true
                 end,
             }):find()

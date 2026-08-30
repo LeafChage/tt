@@ -1,12 +1,17 @@
 local TTConfig = require("tt.config")
 local Sessions = require("tt.sessions")
 local SessionFactory = require("tt.session_factory")
+local Window = require("tt.window")
 
 local M = {}
 
 ---@type Sessions
 M.sessions = Sessions:new(SessionFactory:new(TTConfig.new(nil)))
 
+---@type TTConfig
+M.config = TTConfig.default
+
+--- @param opts table
 function M.setup(opts)
     M.config = TTConfig.new(opts)
 end
@@ -18,15 +23,13 @@ function M.open(id)
         vim.notify("this session does not exist", vim.log.levels.ERROR)
         return
     end
-    vim.api.nvim_win_set_buf(0, session.buf)
-    vim.cmd.startinsert()
+    Window.open(M.config.layout, M.config.float, session.buf)
 end
 
 --- @param name string|nil
 function M.create(name)
     local session = M.sessions:generate(name)
-    vim.api.nvim_win_set_buf(0, session.buf)
-    vim.cmd.startinsert()
+    Window.open(M.config.layout, M.config.float, session.buf)
 end
 
 --- @return SessionInfo[]
