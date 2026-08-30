@@ -1,9 +1,6 @@
-# ToDo
-* [ ] buffer preview
-
 ## How to use
-### lazy.nvim
 ```lua
+--- lazy.nvim
 {
     "LeafChage/tt",
     dependencies = {
@@ -34,11 +31,12 @@
       -- { "<leader>ft", [[<CMD>Telescope tt<CR>]], }, -- open terminal picker
     }
 }
-```
 
-### load extension by telescope
-```lua
+-- load extension
 local telescope = require('telescope')
 telescope.load_extension("tt")
 ```
+
+# ToDo
+* [ ] buffer preview
 
