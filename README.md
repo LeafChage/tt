@@ -1,3 +1,6 @@
+## managing terminal with telescope
+https://github.com/user-attachments/assets/94372909-410f-4ea5-b71d-5e1acfda55d2
+
 ## How to use
 ```lua
 --- lazy.nvim
