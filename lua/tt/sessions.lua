@@ -56,12 +56,13 @@ end
 ---@field id integer
 ---@field name string
 ---@field cwd string
+---@field buf integer
 
 ---@return SessionInfo[]
 function Sessions:list()
     local result = {}
     for i, s in ipairs(self.items) do
-        result[i] = { id = s.id, name = s.name, cwd = s.cwd }
+        result[i] = { id = s.id, name = s.name, cwd = s.cwd, buf = s.buf }
     end
     return result
 end

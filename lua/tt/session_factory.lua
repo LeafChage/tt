@@ -30,7 +30,6 @@ function SessionFactory:start(id, name, cwd, on_exit)
     local buf = vim.api.nvim_create_buf(false, true)
 
     local job = vim.api.nvim_buf_call(buf, function()
-        vim.notify("create bu, and jobstart", vim.log.levels.DEBUG)
         return vim.fn.jobstart(self.config.shell, {
             term = true,
             cwd = cwd,
